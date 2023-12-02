@@ -45,6 +45,7 @@ import InvestigationGraphBar from './InvestigationGraphBar';
 import { UserContext } from '../../../../utils/hooks/useAuth';
 import { investigationAddStixCoreObjectsLinesRelationsDeleteMutation } from './InvestigationAddStixCoreObjectsLines';
 import { isNotEmptyField } from '../../../../utils/utils';
+import RelationLassoSelection from "../../../../utils/graph/RelationLassoSelection";
 
 const PARAMETERS$ = new Subject().pipe(debounce(() => timer(2000)));
 const POSITIONS$ = new Subject().pipe(debounce(() => timer(2000)));
@@ -1006,6 +1007,7 @@ class InvestigationGraphComponent extends Component {
       keyword: '',
       prevClick: null,
       navOpen: localStorage.getItem('navOpen') === 'true',
+      openCreatedRelation: false,
     };
     this.canvas = null;
   }
@@ -2118,6 +2120,8 @@ class InvestigationGraphComponent extends Component {
                 handleSearch={this.handleSearch.bind(this)}
                 navOpen={navOpen}
                 resetAllFilters={this.resetAllFilters.bind(this, false)}
+                openCreatedRelation={this.state.openCreatedRelation}
+                handleCloseRelationCreation={() => this.setState({ openCreatedRelation: false })}
               />
               {selectedEntities.length > 0 && (
                 <EntitiesDetailsRightsBar selectedEntities={selectedEntities} />
@@ -2216,7 +2220,7 @@ class InvestigationGraphComponent extends Component {
                 />
               ) : (
                 <>
-                  <LassoSelection
+                  <RelationLassoSelection
                     width={graphWidth}
                     height={graphHeight}
                     activated={selectModeFree && selectModeFreeReady}
@@ -2225,7 +2229,7 @@ class InvestigationGraphComponent extends Component {
                     setSelectedNodes={(nodes) => {
                       this.selectedNodes.clear();
                       Array.from(nodes).forEach((n) => this.selectedNodes.add(n));
-                      this.setState({ numberOfSelectedNodes: nodes.size });
+                      this.setState({ numberOfSelectedNodes: this.selectedNodes.size, openCreatedRelation: true });
                     }}
                   />
                   <RectangleSelection
