@@ -66,6 +66,7 @@ const stixCoreRelationshipCreationFromEntityListRelationAdd = graphql`
           id
           locations {
             edges {
+              types
               node {
                 id
                 entity_type
@@ -81,6 +82,7 @@ const stixCoreRelationshipCreationFromEntityListRelationAdd = graphql`
           id
           locations {
             edges {
+              types
               node {
                 id
                 entity_type
@@ -146,6 +148,7 @@ const stixCoreRelationshipCreationFromEntityListRelationAdd = graphql`
           id
           subSectors {
             edges {
+              types
               node {
                 id
                 entity_type
