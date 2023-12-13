@@ -15,7 +15,7 @@ type IngestionCsv implements InternalObject & BasicObject {
     name: String!
     description: String
     uri: String!
-    mapper: [String]
+    mapper: String!
     authentication_type: CsvAuthType!
     authentication_value: String
     user_id: String
@@ -48,6 +48,7 @@ type Query {
         first: Int
         after: ID
         orderBy: IngestionCsvOrdering
+        orderMode: OrderingMode
         filters: FilterGroup
         includeAuthorities: Boolean
         search: String
@@ -61,7 +62,7 @@ input IngestionCsvAddInput {
     authentication_type: CsvAuthType!
     authentication_value: String
     uri: String! @constraint(minLength: 5)
-    mapper: [String]
+    mapper: String!
     ingestion_running: Boolean
     user_id: String
 }
