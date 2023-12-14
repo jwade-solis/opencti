@@ -10612,7 +10612,7 @@ type IngestionCsv implements InternalObject & BasicObject {
   name: String!
   description: String
   uri: String!
-  mapper: [String]
+  mapper: CsvMapperConnection
   authentication_type: CsvAuthType!
   authentication_value: String
   user_id: String

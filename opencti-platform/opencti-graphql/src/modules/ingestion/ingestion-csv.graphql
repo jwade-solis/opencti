@@ -15,7 +15,7 @@ type IngestionCsv implements InternalObject & BasicObject {
     name: String!
     description: String
     uri: String!
-    mapper: String!
+    mapper: CsvMapperConnection
     authentication_type: CsvAuthType!
     authentication_value: String
     user_id: String
@@ -62,7 +62,7 @@ input IngestionCsvAddInput {
     authentication_type: CsvAuthType!
     authentication_value: String
     uri: String! @constraint(minLength: 5)
-    mapper: String!
+    mapper: [String]
     ingestion_running: Boolean
     user_id: String
 }

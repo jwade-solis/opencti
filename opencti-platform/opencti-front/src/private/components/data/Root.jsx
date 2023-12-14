@@ -1,5 +1,13 @@
 import React, { Suspense, lazy } from 'react';
 import { Switch, Redirect } from 'react-router-dom';
+import IngestionCsv from '@components/data/IngestionCsv';
+import CsvMappers from './CsvMappers';
+import Security from '../../../utils/Security';
+import Connectors from './Connectors';
+import Entities from './Entities';
+import Relationships from './Relationships';
+import Tasks from './Tasks';
+import Taxii from './Taxii';
 import { BoundaryRoute } from '../Error';
 import { SETTINGS_SETACCESSES } from '../../../utils/hooks/useGranted';
 import Loader from '../../../components/Loader';
@@ -70,58 +78,62 @@ const Root = () => {
         />
         <BoundaryRoute
           exact
-          path="/dashboard/data/sharing"
-          render={() => <Redirect to="/dashboard/data/sharing/streams" />}
-        />
-        <BoundaryRoute
-          exact
-          path="/dashboard/data/sharing/streams"
-          component={Stream}
-        />
-        <BoundaryRoute
-          exact
-          path="/dashboard/data/sharing/feeds"
-          component={Feed}
-        />
-        <BoundaryRoute
-          exact
-          path="/dashboard/data/sharing/taxii"
-          component={Taxii}
-        />
-        <BoundaryRoute
-          exact
-          path="/dashboard/data/processing"
-          render={() => (
-            <Security
-              needs={[SETTINGS_SETACCESSES]}
-              placeholder={<Redirect to="/dashboard/data/processing/tasks" />}
-            >
-              <Redirect to="/dashboard/data/processing/automation" />
-            </Security>
-          )}
-        />
-        <BoundaryRoute
-          exact
-          path="/dashboard/data/processing/automation"
-          component={Playbooks}
-        />
-        <BoundaryRoute
-          exact
-          path="/dashboard/data/processing/automation/:playbookId"
-          component={RootPlaybook}
-        />
-        <BoundaryRoute
-          exact
-          path="/dashboard/data/processing/csv_mapper"
-          component={CsvMappers}
-        />
-        <BoundaryRoute
-          exact
-          path="/dashboard/data/processing/tasks"
-          component={Tasks}
-        />
-      </Switch>
-    </Suspense>
+          path="/dashboard/data/ingestion/csv"
+        component={IngestionCsv}
+      />
+      <BoundaryRoute
+        exact
+        path="/dashboard/data/sharing"
+        render={() => <Redirect to="/dashboard/data/sharing/streams" />}
+      />
+      <BoundaryRoute
+        exact
+        path="/dashboard/data/sharing/streams"
+        component={Stream}
+      />
+      <BoundaryRoute
+        exact
+        path="/dashboard/data/sharing/feeds"
+        component={Feed}
+      />
+      <BoundaryRoute
+        exact
+        path="/dashboard/data/sharing/taxii"
+        component={Taxii}
+      />
+      <BoundaryRoute
+        exact
+        path="/dashboard/data/processing"
+        render={() => (
+          <Security
+            needs={[SETTINGS_SETACCESSES]}
+            placeholder={<Redirect to="/dashboard/data/processing/tasks" />}
+          >
+            <Redirect to="/dashboard/data/processing/automation" />
+          </Security>
+        )}
+      />
+      <BoundaryRoute
+        exact
+        path="/dashboard/data/processing/automation"
+        component={Playbooks}
+      />
+      <BoundaryRoute
+        exact
+        path="/dashboard/data/processing/automation/:playbookId"
+        component={RootPlaybook}
+      />
+      <BoundaryRoute
+        exact
+        path="/dashboard/data/processing/csv_mapper"
+        component={CsvMappers}
+      />
+      <BoundaryRoute
+        exact
+        path="/dashboard/data/processing/tasks"
+        component={Tasks}
+      />
+    </Switch></Suspense>
   );
 };
 
