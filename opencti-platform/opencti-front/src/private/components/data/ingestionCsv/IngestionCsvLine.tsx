@@ -75,6 +75,7 @@ export const IngestionCsvLineComponent: FunctionComponent<IngestionCsvLineProps>
   const classes = useStyles();
   const { t } = useFormatter();
   const data = useFragment(ingestionCsvLineFragment, node);
+  const csvMapper = data.mapper?.edges ?? [];
   return (
     <ListItem classes={{ root: classes.item }} divider={true}>
       <ListItemIcon classes={{ root: classes.itemIcon }}>
@@ -105,12 +106,16 @@ export const IngestionCsvLineComponent: FunctionComponent<IngestionCsvLineProps>
                 status={!!data.ingestion_running}
               />
             </div>
-            <div
-              className={classes.bodyItem}
-              style={{ width: dataColumns.mapper.width }}
-            >
-              {data.mapper}
-            </div>
+            {csvMapper.map((n, idx) => (
+              <div
+                key={idx}
+                className={classes.bodyItem}
+                style={{ width: dataColumns.mapper.width }}
+              >
+                {n.node.name}
+              </div>
+            ))
+            }
           </div>
         }
       />

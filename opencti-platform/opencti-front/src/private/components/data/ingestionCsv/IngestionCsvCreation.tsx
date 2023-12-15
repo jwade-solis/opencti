@@ -6,8 +6,10 @@ import { graphql, useMutation } from 'react-relay';
 import MenuItem from '@mui/material/MenuItem';
 import makeStyles from '@mui/styles/makeStyles';
 import { IngestionCsvLinesPaginationQuery$variables } from '@components/data/ingestionCsv/__generated__/IngestionCsvLinesPaginationQuery.graphql';
-import {FormikConfig, FormikHelpers} from 'formik/dist/types';
+import { FormikConfig } from 'formik/dist/types';
 import { Option } from '@components/common/form/ReferenceField';
+import { CsvAuthType } from '@components/data/ingestionCsv/__generated__/IngestionCsvCreationMutation.graphql';
+import CsvMapperField from '@components/common/form/CsvMapperField';
 import Drawer, { DrawerVariant } from '../../common/drawer/Drawer';
 import { useFormatter } from '../../../../components/i18n';
 import TextField from '../../../../components/TextField';
@@ -16,9 +18,6 @@ import { fieldSpacingContainerStyle } from '../../../../utils/field';
 import { insertNode } from '../../../../utils/store';
 import SelectField from '../../../../components/SelectField';
 import { Theme } from '../../../../components/Theme';
-import {
-  IngestionCsvCreationMutation, IngestionCsvCreationMutation$variables
-} from "@components/data/ingestionCsv/__generated__/IngestionCsvCreationMutation.graphql";
 
 const useStyles = makeStyles<Theme>((theme) => ({
   buttons: {
@@ -47,14 +46,14 @@ interface IngestionCsvCreationForm {
   description: string
   uri: string
   mapper: Option[]
-  authentication_type: string
+  authentication_type: CsvAuthType
   authentication_value: string
   user_id: string
-  username: string
-  password: string
-  cert: string
-  key: string
-  ca: string
+  username?: string
+  password?: string
+  cert?: string
+  key?: string
+  ca?: string
 }
 
 const IngestionCsvCreation: FunctionComponent<IngestionCsvCreationProps> = ({ paginationOptions }) => {
@@ -79,23 +78,24 @@ const IngestionCsvCreation: FunctionComponent<IngestionCsvCreationProps> = ({ pa
   const [commit] = useMutation(ingestionCsvCreationMutation);
   const onSubmit: FormikConfig<IngestionCsvCreationForm>['onSubmit'] = (
     values,
-    { setSubmitting, resetForm }: FormikHelpers<IngestionCsvCreationForm>,
+    { setSubmitting, resetForm },
   ) => {
-    let authentifcationValue = values.authentication_value;
+    let authenticationValue = values.authentication_value;
     if (values.authentication_type === 'basic') {
-      authentifcationValue = `${values.username}:${values.password}`;
+      authenticationValue = `${values.username}:${values.password}`;
     } else if (values.authentication_type === 'certificate') {
-      authentifcationValue = `${values.cert}:${values.key}:${values.ca}`;
+      authenticationValue = `${values.cert}:${values.key}:${values.ca}`;
     }
-    const input: IngestionCsvCreationMutation$variables['input'] = {
+    const input = {
       name: values.name,
       description: values.description,
       uri: values.uri,
       mapper: values.mapper.map((v) => v.value),
       authentication_type: values.authentication_type,
-      authentication_value: authentifcationValue,
+      authentication_value: authenticationValue,
       user_id: values.user_id,
     };
+    console.log('mapper', values.mapper);
     commit({
       variables: {
         input,
@@ -139,7 +139,7 @@ const IngestionCsvCreation: FunctionComponent<IngestionCsvCreationProps> = ({ pa
           onSubmit={onSubmit}
           onReset={onClose}
         >
-          {({ submitForm, handleReset, isSubmitting, values }) => (
+          {({ submitForm, handleReset, setFieldValue, isSubmitting, values }) => (
             <Form style={{ margin: '20px 0 20px 0' }}>
               <Field
                 component={TextField}
@@ -164,13 +164,10 @@ const IngestionCsvCreation: FunctionComponent<IngestionCsvCreationProps> = ({ pa
                 fullWidth={true}
                 style={fieldSpacingContainerStyle}
               />
-              <Field
-                component={TextField}
-                variant="standard"
+              <CsvMapperField
                 name="mapper"
-                label={t('CSV Mapper')}
-                fullWidth={true}
-                style={fieldSpacingContainerStyle}
+                onChange={setFieldValue}
+                values={values.mapper}
               />
               <Field
                 component={SelectField}

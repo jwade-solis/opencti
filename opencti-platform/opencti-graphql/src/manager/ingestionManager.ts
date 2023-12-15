@@ -280,7 +280,7 @@ interface CsvResponseData {
 }
 const csvHttpGet = async (ingestion: BasicStoreEntityIngestionCsv): Promise<CsvResponseData> => {
   const headers = new AxiosHeaders();
-  headers.Accept = 'application/csv+json';
+  headers.Accept = 'application/csv';
   if (ingestion.authentication_type === 'basic') {
     const auth = Buffer.from(ingestion.authentication_value, 'utf-8').toString('base64');
     headers.Authorization = `Basic ${auth}`;
