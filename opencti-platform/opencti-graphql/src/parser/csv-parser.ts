@@ -40,8 +40,7 @@ const parseCsvBufferContent = (buffer: Buffer, delimiter: string): Promise<strin
     const readable = Readable.from(buffer);
     const chunks: Uint8Array[] = [];
     readable.on('data', (chunk: Uint8Array) => {
-      const returnLine = new TextEncoder().encode('\n');
-      chunks.push(new Uint8Array([...chunk, ...returnLine]));
+      chunks.push(new Uint8Array([...chunk]));
     })
       .on('error', (err) => {
         reject(err);
