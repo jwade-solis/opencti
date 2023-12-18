@@ -9641,7 +9641,7 @@ export type IngestionCsv = BasicObject & InternalObject & {
   updated_at?: Maybe<Scalars['DateTime']['output']>;
   uri: Scalars['String']['output'];
   user?: Maybe<Creator>;
-  user_id?: Maybe<Scalars['String']['output']>;
+  user_id: Scalars['String']['output'];
 };
 
 export type IngestionCsvAddInput = {
@@ -9649,10 +9649,10 @@ export type IngestionCsvAddInput = {
   authentication_value?: InputMaybe<Scalars['String']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
   ingestion_running?: InputMaybe<Scalars['Boolean']['input']>;
-  mapper?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  mapper_id: Scalars['String']['input'];
   name: Scalars['String']['input'];
   uri: Scalars['String']['input'];
-  user_id?: InputMaybe<Scalars['String']['input']>;
+  user_id: Scalars['String']['input'];
 };
 
 export type IngestionCsvConnection = {
@@ -31763,7 +31763,7 @@ export type IngestionCsvResolvers<ContextType = any, ParentType extends Resolver
   updated_at?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   uri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   user?: Resolver<Maybe<ResolversTypes['Creator']>, ParentType, ContextType>;
-  user_id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  user_id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
