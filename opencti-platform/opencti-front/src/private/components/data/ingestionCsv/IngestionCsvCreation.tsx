@@ -18,6 +18,7 @@ import { fieldSpacingContainerStyle } from '../../../../utils/field';
 import { insertNode } from '../../../../utils/store';
 import SelectField from '../../../../components/SelectField';
 import { Theme } from '../../../../components/Theme';
+import DateTimePickerField from '../../../../components/DateTimePickerField';
 
 const useStyles = makeStyles<Theme>((theme) => ({
   buttons: {
@@ -48,7 +49,8 @@ interface IngestionCsvCreationForm {
   mapper: Option[]
   authentication_type: CsvAuthType
   authentication_value: string
-  user_id: string
+  current_state_date: Date | null
+  user_id: string | Option
   username?: string
   password?: string
   cert?: string
@@ -66,6 +68,9 @@ const IngestionCsvCreation: FunctionComponent<IngestionCsvCreationProps> = ({ pa
     uri: Yup.string().required(t('This field is required')),
     authentication_type: Yup.string().required(t('This field is required')),
     authentication_value: Yup.string().nullable(),
+    current_state_date: Yup.date()
+      .typeError(t('The value must be a datetime (yyyy-MM-dd hh:mm (a|p)m)'))
+      .nullable(),
     mapper: Yup.array().required(t('This field is required')),
     username: Yup.string().nullable(),
     password: Yup.string().nullable(),
@@ -86,16 +91,17 @@ const IngestionCsvCreation: FunctionComponent<IngestionCsvCreationProps> = ({ pa
     } else if (values.authentication_type === 'certificate') {
       authenticationValue = `${values.cert}:${values.key}:${values.ca}`;
     }
+    const userId = typeof values.user_id === 'string' ? values.user_id : values.user_id.value;
     const input = {
       name: values.name,
       description: values.description,
       uri: values.uri,
-      mapper: values.mapper.map((v) => v.value),
+      mapper: values.mapper.map(({ value }) => value),
       authentication_type: values.authentication_type,
       authentication_value: authenticationValue,
-      user_id: values.user_id,
+      current_state_date: values.current_state_date,
+      user_id: userId,
     };
-    console.log('mapper', values.mapper);
     commit({
       variables: {
         input,
@@ -120,7 +126,7 @@ const IngestionCsvCreation: FunctionComponent<IngestionCsvCreationProps> = ({ pa
       variant={DrawerVariant.createWithPanel}
     >
       {({ onClose }) => (
-        <Formik
+        <Formik<IngestionCsvCreationForm>
           initialValues={{
             name: '',
             description: '',
@@ -128,6 +134,7 @@ const IngestionCsvCreation: FunctionComponent<IngestionCsvCreationProps> = ({ pa
             mapper: [],
             authentication_type: 'none',
             authentication_value: '',
+            current_state_date: null,
             user_id: '',
             username: '',
             password: '',
@@ -157,6 +164,15 @@ const IngestionCsvCreation: FunctionComponent<IngestionCsvCreationProps> = ({ pa
                 style={fieldSpacingContainerStyle}
               />
               <Field
+                component={DateTimePickerField}
+                name="current_state_date"
+                TextFieldProps={{
+                  label: t('Import from date (empty = all Csv possible items)'),
+                  variant: 'standard',
+                  fullWidth: true,
+                }}
+              />
+              <Field
                 component={TextField}
                 variant="standard"
                 name="uri"
@@ -167,7 +183,6 @@ const IngestionCsvCreation: FunctionComponent<IngestionCsvCreationProps> = ({ pa
               <CsvMapperField
                 name="mapper"
                 onChange={setFieldValue}
-                values={values.mapper}
               />
               <Field
                 component={SelectField}

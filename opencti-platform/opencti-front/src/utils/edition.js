@@ -92,6 +92,11 @@ export const convertUser = (element, field = 'user') => (isEmptyField(element?.[
     type: element[field].entity_type,
   });
 
+export const convertMapper = (element) => (element?.mapper?.edges ?? []).map((n) => ({
+  label: n.node.name,
+  value: n.node.id,
+}));
+
 export const convertNotifiers = (element) => element?.notifiers?.map(({ id, name }) => ({ value: id, label: name }));
 
 export const filterEventTypesOptions = [

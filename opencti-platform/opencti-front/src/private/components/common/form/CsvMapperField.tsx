@@ -1,15 +1,20 @@
 import { Option } from '@components/common/form/ReferenceField';
-import { graphql } from 'react-relay';
+import { graphql, PreloadedQuery, usePreloadedQuery } from 'react-relay';
 import React, { FunctionComponent, useState } from 'react';
 import makeStyles from '@mui/styles/makeStyles';
 import { Field } from 'formik';
 import * as R from 'ramda';
-import { CsvMapperFieldSearchQuery$data } from '@components/common/form/__generated__/CsvMapperFieldSearchQuery.graphql';
+import csvMapperFieldSearchQueryGraphql, {
+  CsvMapperFieldSearchQuery,
+  CsvMapperFieldSearchQuery$data,
+} from '@components/common/form/__generated__/CsvMapperFieldSearchQuery.graphql';
 import { fetchQuery } from '../../../../relay/environment';
 import { useFormatter } from '../../../../components/i18n';
 import AutocompleteField from '../../../../components/AutocompleteField';
 import { fieldSpacingContainerStyle } from '../../../../utils/field';
 import ItemIcon from '../../../../components/ItemIcon';
+import useQueryLoading from '../../../../utils/hooks/useQueryLoading';
+import Loader, { LoaderVariant } from '../../../../components/Loader';
 
 const useStyles = makeStyles(() => ({
   icon: {
@@ -26,11 +31,10 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-interface CsvMapperFieldProps {
+interface CsvMapperFieldComponentProps {
   csvMapperId?: string;
   name: string;
   onChange: (name: string, values: Option[]) => void;
-  values?: readonly Option[];
 }
 
 const CsvMapperQuery = graphql`
@@ -46,14 +50,18 @@ const CsvMapperQuery = graphql`
   }
 `;
 
-const CsvMapperField: FunctionComponent<CsvMapperFieldProps> = ({
+const CsvMapperField: FunctionComponent<CsvMapperFieldComponentProps> = ({
   onChange,
-  values,
   name,
 }) => {
   const classes = useStyles();
   const { t } = useFormatter();
-  const [csvMappers, setCsvMappers] = useState<Option[]>([...(values ?? [])]);
+  const [csvMappers, setCsvMappers] = useState<
+  {
+    label: string | undefined;
+    value: string | undefined;
+  }[]
+  >([]);
   const searchCsvMappers = (event: React.ChangeEvent<HTMLInputElement>) => {
     const search = event?.target?.value ?? '';
     fetchQuery(CsvMapperQuery, { search })

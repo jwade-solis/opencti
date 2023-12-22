@@ -1,4 +1,4 @@
-import { graphql, useFragment, useMutation } from 'react-relay';
+import {graphql, useFragment, useMutation} from 'react-relay';
 import React, { FunctionComponent } from 'react';
 import { Option } from '@components/common/form/ReferenceField';
 import * as Yup from 'yup';
@@ -8,14 +8,19 @@ import { Field, Form, Formik } from 'formik';
 import MenuItem from '@mui/material/MenuItem';
 import CreatorField from '@components/common/form/CreatorField';
 import CommitMessage from '@components/common/form/CommitMessage';
-import { IngestionCsvEditionFragment_ingestionCsv$key } from '@components/data/ingestionCsv/__generated__/IngestionCsvEditionFragment_ingestionCsv.graphql';
-import { convertUser } from '../../../../utils/edition';
+import { IngestionCsvEditionContainerFragment_ingestionCsv$data } from '@components/data/ingestionCsv/__generated__/IngestionCsvEditionContainerFragment_ingestionCsv.graphql';
+import {convertMapper, convertUser} from '../../../../utils/edition';
 import { useFormatter } from '../../../../components/i18n';
 import { useSchemaEditionValidation } from '../../../../utils/hooks/useEntitySettings';
 import { adaptFieldValue } from '../../../../utils/String';
 import TextField from '../../../../components/TextField';
 import { fieldSpacingContainerStyle } from '../../../../utils/field';
 import SelectField from '../../../../components/SelectField';
+import DateTimePickerField from "../../../../components/DateTimePickerField";
+import CsvMapperField from "@components/common/form/CsvMapperField";
+import {
+  IngestionCsvEditionFragment_ingestionCsv$key
+} from "@components/data/ingestionCsv/__generated__/IngestionCsvEditionFragment_ingestionCsv.graphql";
 
 export const ingestionCsvEditionPatch = graphql`
   mutation IngestionCsvEditionPatchMutation($id: ID!, $input: [EditInput!]!) {
@@ -34,6 +39,7 @@ const ingestionCsvEditionFragment = graphql`
     authentication_type
     authentication_value
     ingestion_running
+    current_state_date
     mapper {
       edges {
         node {
@@ -64,9 +70,10 @@ interface IngestionCsvEditionForm {
   uri: string,
   authentication_type: string,
   authentication_value: string,
+  current_state_date: Date | null
   ingestion_running: boolean,
   mapper: Option[],
-  user_id: string | { label: string; value: string; type: string };
+  user_id: string | Option
 }
 
 const IngestionCsvEdition: FunctionComponent<IngestionCsvEditionProps> = ({
@@ -75,15 +82,23 @@ const IngestionCsvEdition: FunctionComponent<IngestionCsvEditionProps> = ({
   enableReferences = false,
 }) => {
   const { t } = useFormatter();
-  const csvIngestion = useFragment(ingestionCsvEditionFragment, ingestionCsv);
+  const ingestionCsvData = useFragment(ingestionCsvEditionFragment, ingestionCsv);
   const basicShape = {
     name: Yup.string().required(t('This field is required')),
     description: Yup.string().nullable(),
     uri: Yup.string().required(t('This field is required')),
     authentication_type: Yup.string().required(t('This field is required')),
     authentication_value: Yup.string().nullable(),
+    current_state_date: Yup.date()
+      .typeError(t('The value must be a datetime (yyyy-MM-dd hh:mm (a|p)m)'))
+      .nullable(),
     user_id: Yup.mixed().nullable(),
-    mapper: Yup.string().required(t('This field is required')),
+    username: Yup.string().nullable(),
+    password: Yup.string().nullable(),
+    cert: Yup.string().nullable(),
+    key: Yup.string().nullable(),
+    ca: Yup.string().nullable(),
+    mapper: Yup.array().required(t('This field is required')),
   };
 
   const ingestionCsvValidator = useSchemaEditionValidation('IngestionCsv', basicShape);
@@ -98,7 +113,7 @@ const IngestionCsvEdition: FunctionComponent<IngestionCsvEditionProps> = ({
     }).map(([key, value]) => ({ key, value: adaptFieldValue(value) }));
     commitUpdate({
       variables: {
-        id: csvIngestion.id,
+        id: ingestionCsvData.id,
         input: inputValues,
         commitMessage: commitMessage && commitMessage.length > 0 ? commitMessage : null,
         references: commitReferences,
@@ -120,23 +135,23 @@ const IngestionCsvEdition: FunctionComponent<IngestionCsvEditionProps> = ({
       .then(() => {
         commitUpdate({
           variables: {
-            id: csvIngestion.id,
+            id: ingestionCsvData.id,
             input: { key: name, value: finalValue || '' },
           },
         });
       })
       .catch(() => false);
   };
-
   const initialValues = {
-    name: csvIngestion.name,
-    description: csvIngestion.description,
-    uri: csvIngestion.uri,
-    authentication_type: csvIngestion.authentication_type,
-    authentication_value: csvIngestion.authentication_value,
-    ingestion_running: csvIngestion.ingestion_running,
-    mapper: csvIngestion.mapper,
-    user_id: convertUser(csvIngestion, 'user'),
+    name: ingestionCsvData.name,
+    description: ingestionCsvData.description,
+    uri: ingestionCsvData.uri,
+    authentication_type: ingestionCsvData.authentication_type,
+    authentication_value: ingestionCsvData.authentication_value,
+    current_state_date: ingestionCsvData.current_state_date,
+    ingestion_running: ingestionCsvData.ingestion_running,
+    mapper: convertMapper(ingestionCsvData),
+    user_id: convertUser(ingestionCsvData, 'user'),
   };
 
   return (
@@ -182,14 +197,18 @@ const IngestionCsvEdition: FunctionComponent<IngestionCsvEditionProps> = ({
             style={fieldSpacingContainerStyle}
           />
           <Field
-            component={TextField}
-            variant="standard"
-            name="mapper"
-            label={t('CSV mapper')}
-            fullWidth={true}
-            onSubmit={handleSubmitField}
-            style={fieldSpacingContainerStyle}
+            component={DateTimePickerField}
+            name="current_state_date"
+            TextFieldProps={{
+              label: t(
+                'Import from date (empty = all CSV feed possible items)',
+              ),
+              variant: 'standard',
+              fullWidth: true,
+              style: { marginTop: 20 },
+            }}
           />
+
           <Field
             component={SelectField}
             variant="standard"
@@ -286,7 +305,7 @@ const IngestionCsvEdition: FunctionComponent<IngestionCsvEditionProps> = ({
               setFieldValue={setFieldValue}
               open={false}
               values={values.references}
-              id={csvIngestion.id}
+              id={ingestionCsvData.id}
             />
           )}
         </Form>

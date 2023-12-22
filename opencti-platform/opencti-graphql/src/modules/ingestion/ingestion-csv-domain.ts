@@ -1,3 +1,4 @@
+import axios from 'axios';
 import type { AuthContext, AuthUser } from '../../types/user';
 import { listAllEntities, listEntitiesPaginated, storeLoadById } from '../../database/middleware-loader';
 import { type BasicStoreEntityIngestionCsv, ENTITY_TYPE_INGESTION_CSV } from './ingestion-types';
@@ -7,6 +8,7 @@ import type { EditInput, IngestionCsvAddInput } from '../../generated/graphql';
 import { notify } from '../../database/redis';
 import { BUS_TOPICS } from '../../config/conf';
 import { ABSTRACT_INTERNAL_OBJECT } from '../../schema/general';
+import { parseCsvBufferContent } from '../../parser/csv-parser';
 
 export const findById = (context: AuthContext, user: AuthUser, ingestionId: string) => {
   return storeLoadById<BasicStoreEntityIngestionCsv>(context, user, ingestionId, ENTITY_TYPE_INGESTION_CSV);
@@ -64,4 +66,15 @@ export const deleteIngestionCsv = async (context: AuthContext, user: AuthUser, i
     context_data: { id: ingestionId, entity_type: ENTITY_TYPE_INGESTION_CSV, input: deleted }
   });
   return ingestionId;
+};
+
+export const fetchCsvFromUrl = (url: string): Promise<Buffer> => {
+  return axios.get(url, { responseType: 'arraybuffer' })
+    .then((response) => Buffer.from(response.data));
+};
+
+export const testMapperCsvIngestion = async (ingestionCsv: BasicStoreEntityIngestionCsv, delimiter: string): Promise<string> => {
+  const csvBuffer = await fetchCsvFromUrl(ingestionCsv.uri);
+  const parsedCsv = await parseCsvBufferContent(csvBuffer, delimiter);
+  return parsedCsv.toString();
 };

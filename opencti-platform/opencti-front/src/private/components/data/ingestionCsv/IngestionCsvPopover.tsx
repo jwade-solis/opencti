@@ -137,7 +137,7 @@ const IngestionCsvPopover: FunctionComponent<IngestionCsvPopoverProps> = ({
       },
     });
   };
-
+  console.log("queryRef Popover", queryRef);
   return (
     <>
       <div className={classes?.container}>

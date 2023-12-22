@@ -28,11 +28,12 @@ const IngestionCsvEditionContainer: FunctionComponent<IngestionCsvEditionContain
 }) => {
   const { t } = useFormatter();
 
-  const data = usePreloadedQuery(ingestionCsvEditionContainerQuery, queryRef);
+  const { ingestionCsv } = usePreloadedQuery(ingestionCsvEditionContainerQuery, queryRef);
 
-  if (!data) {
+  if (!ingestionCsv) {
     return <Loader variant={LoaderVariant.inElement} />;
   }
+  console.log('csvIngestion', ingestionCsv);
   return (
     <Drawer
       title={t('Update a CSV Ingester')}
@@ -42,7 +43,7 @@ const IngestionCsvEditionContainer: FunctionComponent<IngestionCsvEditionContain
     >
       {({ onClose }) => (
         <IngestionCsvEdition
-          ingestionCsv={data}
+          ingestionCsv={ingestionCsv}
           enableReferences={useIsEnforceReference('IngestionCsv')}
           handleClose={onClose}
         />

@@ -55,6 +55,8 @@ const ingestionCsvLineFragment = graphql`
     id
     name
     uri
+    ingestion_running
+    current_state_date
     mapper {
       edges {
         node {
@@ -63,7 +65,6 @@ const ingestionCsvLineFragment = graphql`
         }
       }
     }
-    ingestion_running
   }
 `;
 
@@ -73,9 +74,9 @@ export const IngestionCsvLineComponent: FunctionComponent<IngestionCsvLineProps>
   paginationOptions,
 }) => {
   const classes = useStyles();
-  const { t } = useFormatter();
+  const { t, nsdt } = useFormatter();
   const data = useFragment(ingestionCsvLineFragment, node);
-  const csvMapper = data.mapper?.edges ?? [];
+  console.log("line data", data);
   return (
     <ListItem classes={{ root: classes.item }} divider={true}>
       <ListItemIcon classes={{ root: classes.itemIcon }}>
@@ -106,16 +107,12 @@ export const IngestionCsvLineComponent: FunctionComponent<IngestionCsvLineProps>
                 status={!!data.ingestion_running}
               />
             </div>
-            {csvMapper.map((n, idx) => (
-              <div
-                key={idx}
-                className={classes.bodyItem}
-                style={{ width: dataColumns.mapper.width }}
-              >
-                {n.node.name}
-              </div>
-            ))
-            }
+            <div
+              className={classes.bodyItem}
+              style={{ width: dataColumns.current_state_date.width }}
+            >
+              {nsdt(data.current_state_date)}
+            </div>
           </div>
         }
       />
@@ -180,7 +177,7 @@ export const IngestionCsvLineDummy = ({ dataColumns }: { dataColumns: DataColumn
             </div>
             <div
               className={classes.bodyItem}
-              style={{ width: dataColumns.mapper.width }}
+              style={{ width: dataColumns.current_state_date.width }}
             >
               <Skeleton
                 animation="wave"
@@ -193,7 +190,7 @@ export const IngestionCsvLineDummy = ({ dataColumns }: { dataColumns: DataColumn
         }
       />
       <ListItemSecondaryAction classes={{ root: classes.itemIconDisabled }}>
-        <MoreVert />
+        <MoreVert/>
       </ListItemSecondaryAction>
     </ListItem>
   );

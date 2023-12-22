@@ -20,7 +20,7 @@ interface IngestionCsvLinesProps {
 export const ingestionCsvLinesQuery = graphql`
   query IngestionCsvLinesPaginationQuery(
     $search: String
-    $count: Int!
+    $count: Int
     $cursor: ID
     $orderBy: IngestionCsvOrdering
     $orderMode: OrderingMode
@@ -81,21 +81,22 @@ const IngestionCsvLines: FunctionComponent<IngestionCsvLinesProps> = ({
   const { data, hasMore, loadMore, isLoadingMore } = usePreloadedPaginationFragment<
   IngestionCsvLinesPaginationQuery,
   IngestionCsvLines_data$key>({
+    queryRef,
     linesQuery: ingestionCsvLinesQuery,
     linesFragment: ingestionCsvLinesFragment,
-    queryRef,
     nodePath: ['ingestionCsvs', 'pageInfo', 'globalCount'],
     setNumberOfElements,
   });
-  console.log('data', data.ingestionCsvs);
+  const ingestionCsvs = data?.ingestionCsvs?.edges ?? [];
+  const globalCount = data?.ingestionCsvs?.pageInfo?.globalCount;
   return (
     <ListLinesContent
       initialLoading={!data}
       isLoading={isLoadingMore}
       loadMore={loadMore}
       hasMore={hasMore}
-      dataList={data?.ingestionCsvs?.edges ?? []}
-      globalCount={data?.ingestionCsvs?.pageInfo?.globalCount ?? nbOfRowsToLoad}
+      dataList={ingestionCsvs}
+      globalCount={globalCount ?? nbOfRowsToLoad}
       LineComponent={IngestionCsvLineComponent}
       DummyLineComponent={IngestionCsvLineDummy}
       dataColumns={dataColumns}

@@ -59,6 +59,11 @@ const IngestionCsv = () => {
         width: '20%',
         isSortable: false,
       },
+      current_state_date: {
+        label: 'Current state',
+        isSortable: false,
+        width: '15%',
+      },
       mapper: {
         label: 'Mapper',
         width: '20%',
@@ -69,6 +74,7 @@ const IngestionCsv = () => {
       ingestionCsvLinesQuery,
       paginationOptions,
     );
+    console.log('ingestionCsv > QueryRef', queryRef);
     return (
       <ListLines
         helpers={helpers}

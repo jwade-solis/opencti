@@ -9630,14 +9630,16 @@ export type IngestionCsv = BasicObject & InternalObject & {
   authentication_type: CsvAuthType;
   authentication_value?: Maybe<Scalars['String']['output']>;
   created_at?: Maybe<Scalars['DateTime']['output']>;
+  csvMapper?: Maybe<CsvMapperConnection>;
+  current_state_date?: Maybe<Scalars['DateTime']['output']>;
   description?: Maybe<Scalars['String']['output']>;
   entity_type: Scalars['String']['output'];
   id: Scalars['ID']['output'];
   ingestion_running?: Maybe<Scalars['Boolean']['output']>;
-  mapper?: Maybe<CsvMapperConnection>;
   name: Scalars['String']['output'];
   parent_types: Array<Maybe<Scalars['String']['output']>>;
   standard_id: Scalars['String']['output'];
+  test_mapper?: Maybe<Scalars['String']['output']>;
   updated_at?: Maybe<Scalars['DateTime']['output']>;
   uri: Scalars['String']['output'];
   user?: Maybe<Creator>;
@@ -9647,9 +9649,10 @@ export type IngestionCsv = BasicObject & InternalObject & {
 export type IngestionCsvAddInput = {
   authentication_type: CsvAuthType;
   authentication_value?: InputMaybe<Scalars['String']['input']>;
+  csvMapper: Array<InputMaybe<Scalars['String']['input']>>;
+  current_state_date?: InputMaybe<Scalars['DateTime']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
   ingestion_running?: InputMaybe<Scalars['Boolean']['input']>;
-  mapper_id: Scalars['String']['input'];
   name: Scalars['String']['input'];
   uri: Scalars['String']['input'];
   user_id: Scalars['String']['input'];
@@ -31752,14 +31755,16 @@ export type IngestionCsvResolvers<ContextType = any, ParentType extends Resolver
   authentication_type?: Resolver<ResolversTypes['CsvAuthType'], ParentType, ContextType>;
   authentication_value?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   created_at?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  csvMapper?: Resolver<Maybe<ResolversTypes['CsvMapperConnection']>, ParentType, ContextType>;
+  current_state_date?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   entity_type?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   ingestion_running?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
-  mapper?: Resolver<Maybe<ResolversTypes['CsvMapperConnection']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   parent_types?: Resolver<Array<Maybe<ResolversTypes['String']>>, ParentType, ContextType>;
   standard_id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  test_mapper?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   updated_at?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   uri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   user?: Resolver<Maybe<ResolversTypes['Creator']>, ParentType, ContextType>;
