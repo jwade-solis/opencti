@@ -8,7 +8,6 @@ import { Field, Form, Formik } from 'formik';
 import MenuItem from '@mui/material/MenuItem';
 import CreatorField from '@components/common/form/CreatorField';
 import CommitMessage from '@components/common/form/CommitMessage';
-import { IngestionCsvEditionContainerFragment_ingestionCsv$data } from '@components/data/ingestionCsv/__generated__/IngestionCsvEditionContainerFragment_ingestionCsv.graphql';
 import {convertMapper, convertUser} from '../../../../utils/edition';
 import { useFormatter } from '../../../../components/i18n';
 import { useSchemaEditionValidation } from '../../../../utils/hooks/useEntitySettings';
