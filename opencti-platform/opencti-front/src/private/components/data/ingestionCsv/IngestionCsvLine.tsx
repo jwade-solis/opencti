@@ -57,14 +57,6 @@ const ingestionCsvLineFragment = graphql`
     uri
     ingestion_running
     current_state_date
-    mapper {
-      edges {
-        node {
-          id
-          name
-        }
-      }
-    }
   }
 `;
 

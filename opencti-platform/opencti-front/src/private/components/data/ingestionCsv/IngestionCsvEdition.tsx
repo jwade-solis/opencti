@@ -39,14 +39,7 @@ const ingestionCsvEditionFragment = graphql`
     authentication_value
     ingestion_running
     current_state_date
-    mapper {
-      edges {
-        node {
-          id
-          name
-        }
-      }
-    }
+    csvMapper
     user {
       id
       entity_type
@@ -71,7 +64,7 @@ interface IngestionCsvEditionForm {
   authentication_value: string,
   current_state_date: Date | null
   ingestion_running: boolean,
-  mapper: Option[],
+  csvMapper: Option[],
   user_id: string | Option
 }
 
@@ -97,7 +90,7 @@ const IngestionCsvEdition: FunctionComponent<IngestionCsvEditionProps> = ({
     cert: Yup.string().nullable(),
     key: Yup.string().nullable(),
     ca: Yup.string().nullable(),
-    mapper: Yup.array().required(t('This field is required')),
+    csvMapper: Yup.array().required(t('This field is required')),
   };
 
   const ingestionCsvValidator = useSchemaEditionValidation('IngestionCsv', basicShape);
@@ -149,7 +142,7 @@ const IngestionCsvEdition: FunctionComponent<IngestionCsvEditionProps> = ({
     authentication_value: ingestionCsvData.authentication_value,
     current_state_date: ingestionCsvData.current_state_date,
     ingestion_running: ingestionCsvData.ingestion_running,
-    mapper: convertMapper(ingestionCsvData),
+    csvMapper: convertMapper(ingestionCsvData),
     user_id: convertUser(ingestionCsvData, 'user'),
   };
 
