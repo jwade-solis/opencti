@@ -92,8 +92,8 @@ export const computeValidPeriod = async (context: AuthContext, user: AuthUser, i
   const validUntil = await computeValidUntil(context, user, indicator, validFrom, decayRule);
 
   return {
-    validFrom: validFrom.toISOString(),
-    validUntil: validUntil.toISOString(),
+    validFrom,
+    validUntil,
     revoked: validUntil.isBefore(utcDate()),
     validPeriod: validFrom.isSameOrBefore(validUntil)
   };

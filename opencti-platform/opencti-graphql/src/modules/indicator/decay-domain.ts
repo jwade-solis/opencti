@@ -1,3 +1,6 @@
+import moment from 'moment';
+import type { Moment } from 'moment';
+
 export interface DecayRule {
   id: string
   decay_lifetime: number // in days
@@ -67,6 +70,12 @@ export const computeScoreFromExpectedTime = (initialScore: number, daysFromStart
 export const computeTimeFromExpectedScore = (initialScore: number, score: number, model: DecayRule) => {
   // Polynomial implementation (MISP approach)
   return (Math.E ** (Math.log(1 - (score / initialScore)) * (DECAY_FACTOR * model.decay_pound))) * model.decay_lifetime;
+};
+
+export const computeNextScoreReactionDate = (initialScore: number, stableScore: number, model: DecayRule, startDate: Moment) => {
+  const nextKeyPoint = model.decay_points.find((p) => p < stableScore) || model.decay_revoke_score;
+  const daysDelay = computeTimeFromExpectedScore(initialScore, nextKeyPoint, model);
+  return moment(startDate).add(daysDelay, 'days').toDate();
 };
 
 export const findDecayRuleForIndicator = (indicatorObservableType: string) => {
