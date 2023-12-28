@@ -10724,7 +10724,6 @@ type AttributeColumnConfiguration {
   separator: String
   pattern_date: String
   timezone: String
-  default_values: [String]
 }
 
 type AttributeColumn {
@@ -10747,6 +10746,7 @@ type CsvMapperRepresentationAttribute {
   column: AttributeColumn
   based_on: AttributeBasedOn
   ref: AttributeRef
+  default_values: [DefaultValue!]
 }
 
 enum Operator {

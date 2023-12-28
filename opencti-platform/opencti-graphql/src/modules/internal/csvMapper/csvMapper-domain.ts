@@ -26,7 +26,8 @@ export const csvMapperTest = async (context: AuthContext, user: AuthUser, config
 
 export const findById = async (context: AuthContext, user: AuthUser, csvMapperId: string) => {
   const csvMapper = await storeLoadById<BasicStoreEntityCsvMapper>(context, user, csvMapperId, ENTITY_TYPE_CSV_MAPPER);
-  return parseCsvMapper(csvMapper);
+  const parsedMapper = parseCsvMapper(csvMapper);
+  return parsedMapper;
 };
 
 export const findAll = (context: AuthContext, user: AuthUser, opts: QueryCsvMappersArgs) => {
