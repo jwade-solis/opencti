@@ -271,12 +271,7 @@ for (let i = 0; i < providerKeys.length; i += 1) {
           const orgaDefault = mappedConfig.organizations_default ?? [];
           const orgasMapping = mappedConfig.organizations_management?.organizations_mapping || [];
           const orgaPath = mappedConfig.organizations_management?.organizations_path || ['organizations'];
-          const availableOrgas = R.flatten(
-            orgaPath.map((path) => {
-              const value = R.path(path.split('.'), profile) || [];
-              return Array.isArray(value) ? value : [value];
-            })
-          );
+          const availableOrgas = R.flatten(orgaPath.map((path) => R.path(path.split('.'), profile) || []));
           const orgasMapper = genConfigMapper(orgasMapping);
           return [...orgaDefault, ...availableOrgas.map((a) => orgasMapper[a]).filter((r) => isNotEmptyField(r))];
         };
