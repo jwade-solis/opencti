@@ -43,9 +43,10 @@ export const URL_DECAY_RULE: DecayRule = {
   order: 1,
   enabled: true,
 };
-const BUILT_IN_DECAY_RULES = [
+export const BUILT_IN_DECAY_RULES = [
   IP_DECAY_RULE, URL_DECAY_RULE, FALLBACK_DECAY_RULE,
 ];
+
 const DECAY_FACTOR: number = 3.0;
 
 /**
@@ -78,11 +79,11 @@ export const computeNextScoreReactionDate = (initialScore: number, stableScore: 
   return moment(startDate).add(daysDelay, 'days').toDate();
 };
 
-export const findDecayRuleForIndicator = (indicatorObservableType: string) => {
+export const findDecayRuleForIndicator = (indicatorObservableType: string, enabledRules: DecayRule[]) => {
   if (!indicatorObservableType) {
     return FALLBACK_DECAY_RULE;
   }
-  const orderedRules = [...BUILT_IN_DECAY_RULES].sort((a, b) => b.order - a.order);
+  const orderedRules = [...enabledRules].sort((a, b) => b.order - a.order);
   const decayRule = orderedRules.find((rule) => rule.indicator_types.includes(indicatorObservableType) || rule.indicator_types.length === 0);
   return decayRule || FALLBACK_DECAY_RULE;
 };
