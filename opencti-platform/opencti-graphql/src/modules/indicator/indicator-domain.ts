@@ -107,7 +107,7 @@ export const addIndicator = async (context: AuthContext, user: AuthUser, indicat
     decay_points: [...decayRule.decay_points],
     decay_revoke_score: decayRule.decay_revoke_score,
   };
-  const { validFrom, validUntil, revoked, validPeriod } = await computeValidPeriod(context, user, indicator, decayRule);
+  const { validFrom, validUntil, revoked, validPeriod } = await computeValidPeriod(indicator, decayRule);
   const indicatorBaseScore = indicator.x_opencti_score ?? 50;
   const nextScoreReactionDate = computeNextScoreReactionDate(indicatorBaseScore, indicatorBaseScore, decayRule, validFrom);
   const indicatorToCreate = R.pipe(
