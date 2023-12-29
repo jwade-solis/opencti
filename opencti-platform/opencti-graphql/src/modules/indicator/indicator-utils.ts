@@ -79,7 +79,7 @@ const computeValidFrom = (indicator: IndicatorAddInput): Moment => {
   return utcDate();
 };
 
-const computeValidUntil = async (context: AuthContext, user: AuthUser, indicator: IndicatorAddInput, validFrom: Moment, decayRule: DecayRule): Promise<Moment> => {
+const computeValidUntil = async (indicator: IndicatorAddInput, validFrom: Moment, decayRule: DecayRule): Promise<Moment> => {
   if (isNotEmptyField(indicator.valid_until)) {
     return utcDate(indicator.valid_until);
   }
@@ -87,9 +87,9 @@ const computeValidUntil = async (context: AuthContext, user: AuthUser, indicator
   return validFrom.clone().add(ttl, 'days');
 };
 
-export const computeValidPeriod = async (context: AuthContext, user: AuthUser, indicator: IndicatorAddInput, decayRule: DecayRule) => {
+export const computeValidPeriod = async (indicator: IndicatorAddInput, decayRule: DecayRule) => {
   const validFrom = computeValidFrom(indicator);
-  const validUntil = await computeValidUntil(context, user, indicator, validFrom, decayRule);
+  const validUntil = await computeValidUntil(indicator, validFrom, decayRule);
 
   return {
     validFrom,

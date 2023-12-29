@@ -84,11 +84,11 @@ describe('indicator utils', () => {
     );
   });
   it('should valid_from default', async () => {
-    const { validFrom } = await computeValidPeriod(testContext, ADMIN_USER, { ...DEFAULT_PARAM }, FALLBACK_DECAY_RULE);
+    const { validFrom } = await computeValidPeriod({ ...DEFAULT_PARAM }, FALLBACK_DECAY_RULE);
     expect(validFrom).toBeDefined();
   });
   it('should valid_from created', async () => {
-    const { validFrom, validUntil } = await computeValidPeriod(testContext, ADMIN_USER, {
+    const { validFrom, validUntil } = await computeValidPeriod({
       ...DEFAULT_PARAM,
       created: '2023-01-21T17:57:09.266Z'
     }, FALLBACK_DECAY_RULE);
@@ -96,7 +96,7 @@ describe('indicator utils', () => {
     expect(validUntil.format('YYYY-MM-DD HH:mm')).toBe('2024-01-21 17:57');
   });
   it('should valid_from itself', async () => {
-    const { validFrom, validUntil } = await computeValidPeriod(testContext, ADMIN_USER, {
+    const { validFrom, validUntil } = await computeValidPeriod({
       ...DEFAULT_PARAM,
       valid_from: '2023-02-21T17:57:09.266Z',
       created: '2023-01-21T17:57:09.266Z'
